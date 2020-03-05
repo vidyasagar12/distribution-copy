@@ -1,0 +1,486 @@
+﻿@model distribution_copy.Models.InputModel
+
+@{
+    ViewBag.Title = "Index";
+}
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+}
+<link href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+
+<style>
+    .sizeNormal {
+        font-size: 18px;
+    }
+
+    .borderRadius {
+        border-radius: 10px;
+    }
+</style>
+
+<script>
+    $(document).ready( function () {
+
+
+    });
+    var i = 0;
+    function Export() {
+         var o = document.getElementById("org");
+        var p = document.getElementById("ProjectName");
+        var AssignedTo = document.getElementById("AssignedTo");
+        var Sprint = document.getElementById("Sprint");
+        var State = document.getElementById("State");
+        var CreatedDate = document.getElementById("CreatedDate");
+        var w = document.getElementById("WorkItemType");
+        var inp = new Object();
+        var org = o.options[o.selectedIndex].value;
+        var pro = p.options[p.selectedIndex].value;
+        var wit = w.options[w.selectedIndex].value;
+        var ast = AssignedTo.options[AssignedTo.selectedIndex].value;
+        var spr = Sprint.options[Sprint.selectedIndex].value;
+        var stt = State.options[State.selectedIndex].value;
+        if (org == "0" || org == null || org == undefined)
+            inp.OrganizationName = null;
+        else
+            inp.OrganizationName = o.options[o.selectedIndex].text;
+
+        if (pro == "0" || pro == null || pro == undefined || pro == "" || pro == 'Empty List') {
+            inp.ProjectName = null;
+        }
+        else {
+            inp.ProjectName = p.options[p.selectedIndex].text;
+        }
+        if (wit == "0" || wit == null || wit == undefined || wit == "" || wit == 'Empty List') {
+            inp.WorkItemType = null;
+        }
+        else {
+            inp.WorkItemType = w.options[w.selectedIndex].text;
+        }
+
+
+
+
+        if (ast == "0" || ast == null || ast == undefined || ast == "" || ast == 'Empty List') {
+            inp.AssignedTo = null;
+        }
+        else {
+            inp.AssignedTo = AssignedTo.options[AssignedTo.selectedIndex].text;
+        }
+
+        if (spr == "0" || spr == null || spr == undefined||spr == "" || spr == 'Empty List') {
+            inp.Sprint = null;
+        }
+        else {
+            inp.Sprint = Sprint.options[Sprint.selectedIndex].text;
+        }
+
+        if (CreatedDate.value == null || CreatedDate.value == "") {
+            inp.CreatedDate = null;
+
+        } else {
+            inp.CreatedDate = CreatedDate.value;
+        }
+
+        if (stt == "0" || stt == null || stt == undefined || stt == "" || stt == 'Empty List') {
+            inp.State = null;
+        }
+        else {
+            inp.State = State.options[State.selectedIndex].text;
+        }
+
+        console.log(inp);
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Export", "Account")',
+            data: { inp },
+
+            success:
+                function () {
+                    alert("Exported Sucessfully");
+
+
+                }
+            ,
+            failure:
+                function () { alert("Something went wrong"); }
+
+        });
+
+    }
+    var i = 0;
+       var t;
+    function disable() {
+        if ((document.getElementById("org").value == "") || (document.getElementById("pat").value == "")) {
+            document.getElementById("submit").disabled = true;
+        }
+        else
+            document.getElementById("submit").disabled = false;
+    }
+
+    function populateProjects() {
+        var o = document.getElementById("org");
+        var ORG = o.options[o.selectedIndex].text;
+        if (ORG == "--Choose Organisation--") {
+            return;
+        }
+
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ProjectList", "Account")',
+            data: { ORG },
+
+            success:
+                function(data) {
+                    console.log(data);
+                    document.getElementById("ProjectName").innerHTML = "<option value='0'>--ALL--</option>";
+                    for (let i = 0; i < data.length; i++) {
+                        document.getElementById("ProjectName").innerHTML += "<option value='" + data[i].Name + "'>" + data[i].Name + "</option>";
+                    }
+                }
+            ,
+            failure:
+                function() { alert("Something went wrong"); }
+
+        });
+
+    }
+    function filter() {
+        var o = document.getElementById("org");
+        var p = document.getElementById("ProjectName");
+        var AssignedTo = document.getElementById("AssignedTo");
+        var Sprint = document.getElementById("Sprint");
+        var State = document.getElementById("State");
+        var CreatedDate = document.getElementById("CreatedDate");
+        var w = document.getElementById("WorkItemType");
+        var inp = new Object();
+        if (o.options[o.selectedIndex].value == "0")
+            inp.OrganizationName = null;
+        else
+            inp.OrganizationName = o.options[o.selectedIndex].text;
+
+        if (p.options[p.selectedIndex].value == "0") {
+            inp.ProjectName = null;
+            return;
+        }
+        else
+            inp.ProjectName = p.options[p.selectedIndex].text;
+
+        if (w.options[w.selectedIndex].value == "0")
+            inp.WorkItemType = null;
+        else
+            inp.WorkItemType = w.options[w.selectedIndex].text;
+
+
+
+
+        if (AssignedTo.options[AssignedTo.selectedIndex].value == "0")
+            inp.AssignedTo = null;
+        else
+            inp.AssignedTo = AssignedTo.options[AssignedTo.selectedIndex].text;
+
+        if (Sprint.options[Sprint.selectedIndex].value == "0")
+            inp.Sprint = null;
+        else
+            inp.Sprint = Sprint.options[Sprint.selectedIndex].text;
+
+        if (CreatedDate.value == null || "") {
+            inp.CreatedDate = null;
+
+        } else
+            inp.CreatedDate = CreatedDate.value;
+
+        if (State.options[State.selectedIndex].value == "0")
+            inp.State = null;
+        else
+            inp.State = State.options[State.selectedIndex].text;
+
+        console.log(inp);
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Filter", "Account")',
+            data: { inp },
+
+            success:
+                function (data) {
+                    console.log(data);
+                    var table = document.getElementById("table");
+                    //document.getElementById("dataTable").hidden = false;
+                    document.getElementById("exc").disabled = false;
+                   
+
+                      if (i > 0) {
+                          //$('#dataTable').DataTable().destroy();
+                           document.getElementById("table").innerHTML = "";
+                    }
+                    var tabledata="<table id='dataTable'><tbody>";
+                    for (let i = 0; i < data.length; i++) {
+                        tabledata += "<tr><td style=''>" + data[i].id + "</td><td>" + data[i].fields.Title + "</td><td>" + data[i].fields.TeamProject + "</td><td>" + data[i].fields.Sprint + "</td><td>" + data[i].fields.State + "</td><td>" + data[i].fields.WorkItemType + "</td></tr>";
+                    }
+
+                    document.getElementById("Count").innerHTML = " Count = " + data.length;
+                   tabledata += "</tbody></table>";
+                    table.innerHTML += tabledata;
+                    document.getElementById("Count").innerHTML = " Count = " + data.length;
+                      $('#dataTable').DataTable();
+                        i++;
+
+
+                }
+            ,
+            failure:
+                function () { alert("Something went wrong"); }
+
+        });
+
+    }
+
+
+    function populateAll() {
+         var o = document.getElementById("org");
+         var AssignedTo = document.getElementById("AssignedTo");
+         var Sprint = document.getElementById("Sprint");
+         var State = document.getElementById("State");
+         var inp = new Object();
+         inp.OrganizationName = o.options[o.selectedIndex].text;
+        if (inp.OrganizationName == "--Choose Organisation--") {
+            return;
+         }
+         var p = document.getElementById("ProjectName");
+         inp.ProjectName = p.options[p.selectedIndex].text;
+         if (inp.ProjectName == "--ALL--") {
+             populateWorkItems();
+
+             return;
+         }
+
+
+     //var w = document.getElementById("WorkItemType");
+     //    inp.WorkItemType = w.options[w.selectedIndex].text;
+     //    if (inp.WorkItemType == "--Choose Type--")
+     //        return;
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AllList", "Account")',
+            data: { inp },
+
+            success:
+                function(data) {
+                    console.log(data);
+                    document.getElementById("AssignedTo").innerHTML = "<option value='0'>--ALL--</option>";
+                    for (let i = 0; i < data[0].length; i++) {
+                        document.getElementById("AssignedTo").innerHTML += "<option value='" + data[0][i] + "'>" + data[0][i]+ "</option>";
+                    }
+                    document.getElementById("Sprint").innerHTML = "<option value='0'>--ALL--</option>";
+                    for (let i = 0; i < data[1].length; i++) {
+                        document.getElementById("Sprint").innerHTML += "<option value='" + data[1][i] + "'>" + data[1][i]+ "</option>";
+                    }
+                    document.getElementById("State").innerHTML = "<option value='0'>--ALL--</option>";
+                    for (let i = 0; i < data[2].length; i++) {
+                        document.getElementById("State").innerHTML += "<option value='" + data[2][i] + "'>" + data[2][i]+ "</option>";
+                    }
+                     document.getElementById("WorkItemType").innerHTML = "<option value='0'>--Choose Type--</option>";
+                    for (let i = 0; i < data[3].length; i++) {
+                        document.getElementById("WorkItemType").innerHTML += "<option value='" + data[3][i] + "'>" + data[3][i]+ "</option>";
+                    }
+                    filter();
+                }
+            ,
+            failure:
+                function() { alert("Something went wrong"); }
+        });
+
+    }
+
+    function populateWorkItemTypes() {
+        var inp = new Object();
+        var o = document.getElementById("org");
+         inp.OrganizationName = o.options[o.selectedIndex].text;
+     var p = document.getElementById("ProjectName");
+        //inp.ProjectName =  p.options[p.selectedIndex].text;
+        if (inp.OrganizationName == "--Choose Organisation--") {
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("WITypes", "Account")',
+            data: { inp },
+
+            success:
+                function(data) {
+                    console.log(data);
+                    document.getElementById("WorkItemType").innerHTML = "<option value='0'>--Choose Type--</option>";
+                    for (let i = 0; i < data.length; i++) {
+                        document.getElementById("WorkItemType").innerHTML += "<option value='" + data[i] + "'>" + data[i] + "</option>";
+                    }
+                }
+
+        });
+        populateProjects();
+
+    }
+</script>
+
+@*<h4 class="display-4" style="padding-top:2%;font-size:25px"><i class="fa fa-rocket" style="font-size:28px"></i>Bug-Reporter</h4>*@
+
+<div class="form-horizontal" style="font-size:16px">
+
+    <form action="~/Account/Export" method="post" class="mt-5">
+        <div class="">
+            <div class="form-row my-2">
+                @* ORGaniztiovv *@
+                @Html.Label("Organiztion", htmlAttributes: new { @class = "control-label display-4 pr-5  sizeNormal" })
+
+                @Html.DropDownListFor(model => model.OrganizationName, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius", id = "org", onchange = "populateWorkItemTypes()", style = "opacity:0.8" })
+
+                @Html.ValidationMessageFor(model => model.OrganizationName, "", new { @class = "text-danger" })
+
+
+            </div>
+            <div class="form-row">
+                @Html.Label("Project Name ", htmlAttributes: new { @class = "control-label  display-4 sizeNormal", style = "padding-right:35px" })
+
+                @Html.DropDownListFor(model => model.ProjectName, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius", id = "ProjectName", onchange = "populateAll()", style = "opacity:0.8" })
+
+                @Html.ValidationMessageFor(model => model.ProjectName, "", new { @class = "text-danger" })
+
+                <button id="exc" type="submit" class="btn btn-success ml-5" disabled>Dowload Excel</button>
+            </div>
+            <div class="form-row my-2">
+                @Html.Label("Work Item Type", htmlAttributes: new { @class = "control-label  display-4 sizeNormal", style = "padding-right:21px" })
+
+                @Html.DropDownListFor(model => model.WorkItemType, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius", id = "WorkItemType", onchange = "populateWorkItems()", style = "opacity:0.8" })
+
+                @Html.ValidationMessageFor(model => model.WorkItemType, "", new { @class = "text-danger" })
+
+            </div>
+
+
+            @*<div class="form-row">
+                    <button id="submit" type="submit" class="btn btn-default btn-dark mt-4 pb-0" style="margin-left:250px;" disabled><p class="display-4" style="font-size:16px;">Fetch Details</p> </button>
+                </div>*@
+            <div id="filters" hidden>
+                <h4>Filter By:</h4>
+                <p style="font-size:10px">Note:"Please Choose a Project if not Chosen to Access Filters."</p>
+                <div class="form-row" style="margin-left:12%">
+
+
+
+                    @Html.Label("Assigned To ", htmlAttributes: new { @class = "control-label  display-4 sizeNormal", style = "padding-left:10px;padding-right:15px" })
+
+                    @Html.DropDownListFor(model => model.AssignedTo, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius", id = "AssignedTo", onchange = "filter()", style = "opacity:0.8" })
+
+
+                    @Html.Label("Sprint ", htmlAttributes: new { @class = "control-label  display-4 sizeNormal", style = "padding-left:22px;padding-right:5px" })
+
+                    @Html.DropDownListFor(model => model.Sprint, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius", id = "Sprint", onchange = "filter()", style = "opacity:0.8" })
+
+                </div>
+                <div class="form-row mt-2" style="margin-left:12%">
+                    @Html.Label("Created Date ", htmlAttributes: new { @class = "control-label  display-4 sizeNormal", style = "padding-left:10px;padding-right:5px" })
+
+                    @Html.EditorFor(model => model.CreatedDate, new { htmlAttributes = new { @class = "form-control borderRadius", id = "CreatedDate", type = "date", onchange = "filter()" } })
+
+
+                    @Html.Label("State ", htmlAttributes: new { @class = "control-label  display-4 sizeNormal", style = "padding-left:22px;padding-right:10px" })
+
+                    @Html.DropDownListFor(model => model.State, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius", id = "State", onchange = "filter()", style = "opacity:0.8" })
+                </div>
+            </div>
+        </div>
+
+    </form>
+    <div><p id="Count"></p></div>
+    <div id="table">
+        @*<table id="dataTable" class="" style="border-radius:10px" hidden>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Title</th>
+                    <th>Project</th>
+                    <th>Sprint</th>
+                    <th>State</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody id="body"></tbody>
+        </table>*@
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+     $.ajax({
+                type: 'get',
+                dataType: 'json',
+                url: '@Url.Action("AccountList","Account")',
+                success: function (data) {
+
+                    var s = '<option value="0">--Choose Organisation--</option>';
+                    $("#org").empty();
+               for (var i = 0; i < data.length; i++) {
+                   s += '<option value="' + data[i].accountName + '">' + data[i].accountName + '</option>';
+                    }
+                    $("#org").append(s);
+
+                }
+            });
+    });
+    function populateWorkItems() {
+        var inp = new Object();
+        var o = document.getElementById("org");
+         inp.OrganizationName = o.options[o.selectedIndex].text;
+     var p = document.getElementById("ProjectName");
+     var w = document.getElementById("WorkItemType");
+        //inp.ProjectName = p.options[p.selectedIndex].text;
+        inp.WorkItemType=w.options[w.selectedIndex].text
+        if (inp.OrganizationName == "--Choose Organisation--") {
+            document.getElementById("exc").disabled = true;
+            return;
+        }
+        if (inp.WorkItemType == "--Choose Type--")
+            return;
+
+        document.getElementById("filters").hidden = false;
+
+
+
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("getWorkItembyType","Account")',
+            data: { inp },
+
+            success:
+                function(data) {
+                    console.log(data);
+                    var table = document.getElementById("table");
+                    //document.getElementById("dataTable").hidden = false;
+                    document.getElementById("exc").disabled = false;
+                 
+                    if (i > 0) {
+                        //$('#dataTable').DataTable().destroy();
+                           table.innerHTML = "";
+                    }
+                    var tabledata="<table id='dataTable'><tbody>";
+                    for (let i = 0; i < data.length; i++) {
+                       tabledata+= "<tr><td style=''>"+ data[i].id + "</td><td>" + data[i].fields.Title + "</td><td>" + data[i].fields.TeamProject + "</td><td>" + data[i].fields.Sprint + "</td><td>" + data[i].fields.State + "</td><td>" + data[i].fields.WorkItemType + "</td></tr>"
+                    }
+                    tabledata += "</tbody></table>";
+                    table.innerHTML += tabledata;
+                    document.getElementById("Count").innerHTML = " Count = " + data.length;
+                      $('#dataTable').DataTable();
+                        i++;
+
+
+                }
+
+
+
+        });
+
+    }
+</script>

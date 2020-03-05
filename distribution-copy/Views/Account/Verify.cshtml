@@ -1,0 +1,51 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewBag.Title = "";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <title>Verify</title>
+
+</head>
+<body>
+    <br />
+    <h3 class="display-3" style="padding-left:28%;font-size:35px">Welcome to "Custom Report"</h3>
+    <br />
+    <br />
+    <br />
+    <h4 class="display-4" style="padding-left:32%;font-size:30px">Please Sign-In to Continue</h4>
+    <br />
+    <br />
+    <br />
+    <br />
+    <section class="section-1 d-flex flex-column">
+        <main class="d-flex">
+
+
+            <div class="text-center mt-4" style="margin-left:43%;margin-top:35%">
+                <button class="btn btn-primary" id="signInWithVSTS">Sign In</button>
+            </div>
+
+
+        </main>
+
+    </section>
+</body>
+</html>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#signInWithVSTS').click(function () {
+            window.location.href = "../Account/index";
+        });
+
+
+    });
+    </script>
