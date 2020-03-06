@@ -20,12 +20,12 @@
 </style>
 
 <script>
-    $(document).ready( function () {
+    //$(document).ready( function () {
 
 
-    });
-    var i = 0;
-    function Export() {
+    //});
+    //var i = 0;
+    @*function Export() {
          var o = document.getElementById("org");
         var p = document.getElementById("ProjectName");
         var AssignedTo = document.getElementById("AssignedTo");
@@ -107,9 +107,9 @@
 
         });
 
-    }
+    }*@
     var i = 0;
-       var t;
+    var t;
     function disable() {
         if ((document.getElementById("org").value == "") || (document.getElementById("pat").value == "")) {
             document.getElementById("submit").disabled = true;
@@ -147,6 +147,10 @@
 
     }
     function filter() {
+        document.getElementById('load').hidden = false;
+        document.getElementById('Count').hidden = true;
+                    document.getElementById('table').hidden = true;
+
         var o = document.getElementById("org");
         var p = document.getElementById("ProjectName");
         var AssignedTo = document.getElementById("AssignedTo");
@@ -161,8 +165,9 @@
             inp.OrganizationName = o.options[o.selectedIndex].text;
 
         if (p.options[p.selectedIndex].value == "0") {
+            document.getElementById("filters").hidden = true;
             inp.ProjectName = null;
-            return;
+            
         }
         else
             inp.ProjectName = p.options[p.selectedIndex].text;
@@ -200,7 +205,8 @@
         $.ajax({
             type: "POST",
             url: '@Url.Action("Filter", "Account")',
-            data: { inp },
+            data: { 'inp':  inp , 'loc': 0 }
+        ,
 
             success:
                 function (data) {
@@ -211,21 +217,39 @@
                    
 
                       if (i > 0) {
-                          //$('#dataTable').DataTable().destroy();
+                          $('#dataTable').DataTable().destroy();
                            document.getElementById("table").innerHTML = "";
                     }
-                    var tabledata="<table id='dataTable'><tbody>";
-                    for (let i = 0; i < data.length; i++) {
-                        tabledata += "<tr><td style=''>" + data[i].id + "</td><td>" + data[i].fields.Title + "</td><td>" + data[i].fields.TeamProject + "</td><td>" + data[i].fields.Sprint + "</td><td>" + data[i].fields.State + "</td><td>" + data[i].fields.WorkItemType + "</td></tr>";
-                    }
+                    var tabledata;
+                    if (data.length > 0) {
+                        tabledata = "<table id='dataTable'><thead> <tr><th>Id</th><th>Title</th><th>Project</th><th>Sprint</th><th>State</th><th>Type</th></tr></thead><tbody>";
 
-                    document.getElementById("Count").innerHTML = " Count = " + data.length;
-                   tabledata += "</tbody></table>";
+                        for (let i = 0; i < data.length; i++) {
+                            tabledata += "<tr><td style=''>" + data[i].id + "</td><td><a href='https://dev.azure.com/" + inp.OrganizationName + "/" + data[i].fields.TeamProject + "/_workitems/edit/" + data[i].id + "' target='_blank'>" + data[i].fields.Title + "</a></td><td>" + data[i].fields.TeamProject + "</td><td>" + data[i].fields.Sprint + "</td><td>" + data[i].fields.State + "</td><td>" + data[i].fields.WorkItemType + "</td></tr>";
+                        }
+
+                        document.getElementById("Count").innerHTML = " Count = " + data.length;
+                        tabledata += "</tbody></table>";
+                    } else {
+                       tabledata = "<table id='dataTable'><thead></thead><tbody></tbody><table>";
+                        table.innerHTML = tabledata;
+                         var table= $('#dataTable').DataTable();
+                              document.getElementById('load').hidden = true;
+                        document.getElementById("table").hidden = false;
+                           i++;
+                        return;
+                    }
+                    console.log(tabledata);
+
                     table.innerHTML += tabledata;
                     document.getElementById("Count").innerHTML = " Count = " + data.length;
-                      $('#dataTable').DataTable();
+                    var table=$('#dataTable').DataTable();
+                
                         i++;
 
+                    document.getElementById('load').hidden = true;
+                    document.getElementById("table").hidden = false;
+                    document.getElementById('Count').hidden = false;
 
                 }
             ,
@@ -249,11 +273,26 @@
          }
          var p = document.getElementById("ProjectName");
          inp.ProjectName = p.options[p.selectedIndex].text;
-         if (inp.ProjectName == "--ALL--") {
-             populateWorkItems();
+        if (inp.ProjectName == "--ALL--") {
+            populateWorkItemTypes();
+            document.getElementById("filters").hidden = true;
 
-             return;
-         }
+            document.getElementById("AssignedTo").disabled = true;
+            document.getElementById("Sprint").disabled = true;
+            document.getElementById("State").disabled = true;
+            document.getElementById("CreatedDate").disabled = true;
+
+
+            return;
+        }
+        else {
+            
+        document.getElementById("filters").hidden = false;
+            document.getElementById("AssignedTo").disabled = false;
+            document.getElementById("Sprint").disabled = false;
+            document.getElementById("State").disabled = false;
+            document.getElementById("CreatedDate").disabled = false;
+        }
 
 
      //var w = document.getElementById("WorkItemType");
@@ -281,11 +320,12 @@
                     for (let i = 0; i < data[2].length; i++) {
                         document.getElementById("State").innerHTML += "<option value='" + data[2][i] + "'>" + data[2][i]+ "</option>";
                     }
-                     document.getElementById("WorkItemType").innerHTML = "<option value='0'>--Choose Type--</option>";
+                     document.getElementById("WorkItemType").innerHTML = "<option value='0' >--ALL--</option>";
                     for (let i = 0; i < data[3].length; i++) {
                         document.getElementById("WorkItemType").innerHTML += "<option value='" + data[3][i] + "'>" + data[3][i]+ "</option>";
                     }
                     filter();
+                    
                 }
             ,
             failure:
@@ -295,12 +335,19 @@
     }
 
     function populateWorkItemTypes() {
+        document.getElementById('Count').hidden = true;
+
+        document.getElementById("table").hidden = true;
+        document.getElementById('load').hidden = false;
+
         var inp = new Object();
         var o = document.getElementById("org");
          inp.OrganizationName = o.options[o.selectedIndex].text;
      var p = document.getElementById("ProjectName");
         //inp.ProjectName =  p.options[p.selectedIndex].text;
         if (inp.OrganizationName == "--Choose Organisation--") {
+            $("#filters").hide();
+            document.getElementById('load').hidden = true;
             return;
         }
 
@@ -312,14 +359,24 @@
             success:
                 function(data) {
                     console.log(data);
-                    document.getElementById("WorkItemType").innerHTML = "<option value='0'>--Choose Type--</option>";
+                    document.getElementById("WorkItemType").innerHTML = "<option value='0' >--ALL--</option>";
                     for (let i = 0; i < data.length; i++) {
                         document.getElementById("WorkItemType").innerHTML += "<option value='" + data[i] + "'>" + data[i] + "</option>";
                     }
+                    populateProjects();
+                    if (data.length > 0) {
+                        filter();
+                    }
+                    else {
+                        document.getElementById("Count").innerHTML = "Count = 0"
+                        document.getElementById("Count").hidden = false;
+                       document.getElementById("load").hidden = true;
+                        document.getElementById("table").innerHTML = "No Data";
+}
                 }
 
         });
-        populateProjects();
+   
 
     }
 </script>
@@ -332,9 +389,9 @@
         <div class="">
             <div class="form-row my-2">
                 @* ORGaniztiovv *@
-                @Html.Label("Organiztion", htmlAttributes: new { @class = "control-label display-4 pr-5  sizeNormal" })
+                @Html.Label("Organization", htmlAttributes: new { @class = "control-label display-4  sizeNormal",style="padding-right:40px" })
 
-                @Html.DropDownListFor(model => model.OrganizationName, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius", id = "org", onchange = "populateWorkItemTypes()", style = "opacity:0.8" })
+                @Html.DropDownListFor(model => model.OrganizationName, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius", id = "org", onchange = "populateWorkItemTypes()", style = "opacity:0.8;" })
 
                 @Html.ValidationMessageFor(model => model.OrganizationName, "", new { @class = "text-danger" })
 
@@ -347,24 +404,25 @@
 
                 @Html.ValidationMessageFor(model => model.ProjectName, "", new { @class = "text-danger" })
 
-                <button id="exc" type="submit" class="btn btn-success ml-5" disabled>Dowload Excel</button>
+                <button id="exc" type="submit" class="btn btn-success ml-5" disabled>Download Excel</button>
             </div>
+
             <div class="form-row my-2">
                 @Html.Label("Work Item Type", htmlAttributes: new { @class = "control-label  display-4 sizeNormal", style = "padding-right:21px" })
 
-                @Html.DropDownListFor(model => model.WorkItemType, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius", id = "WorkItemType", onchange = "populateWorkItems()", style = "opacity:0.8" })
+                @Html.DropDownListFor(model => model.WorkItemType, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius", id = "WorkItemType", onchange = "filter()", style = "opacity:0.8" })
 
                 @Html.ValidationMessageFor(model => model.WorkItemType, "", new { @class = "text-danger" })
 
             </div>
+            <p style="font-size:10px">Note:"Please Choose a Project if not Chosen to Access Filters."</p>
 
 
             @*<div class="form-row">
-                    <button id="submit" type="submit" class="btn btn-default btn-dark mt-4 pb-0" style="margin-left:250px;" disabled><p class="display-4" style="font-size:16px;">Fetch Details</p> </button>
-                </div>*@
+            <button id="submit" type="submit" class="btn btn-default btn-dark mt-4 pb-0" style="margin-left:250px;" disabled><p class="display-4" style="font-size:16px;">Fetch Details</p> </button>
+        </div>*@
             <div id="filters" hidden>
                 <h4>Filter By:</h4>
-                <p style="font-size:10px">Note:"Please Choose a Project if not Chosen to Access Filters."</p>
                 <div class="form-row" style="margin-left:12%">
 
 
@@ -393,8 +451,12 @@
         </div>
 
     </form>
+    <img id="load" style="margin-left:45%" height="100" width="100" src="~/Content/Images/loadinggif.gif" hidden/>
     <div><p id="Count"></p></div>
     <div id="table">
+        <table>
+            
+        </table>
         @*<table id="dataTable" class="" style="border-radius:10px" hidden>
             <thead>
                 <tr>
@@ -441,8 +503,11 @@
             document.getElementById("exc").disabled = true;
             return;
         }
-        if (inp.WorkItemType == "--Choose Type--")
+        if (inp.WorkItemType == "--ALL--") {
+
+            filter();
             return;
+        }
 
         document.getElementById("filters").hidden = false;
 
@@ -462,18 +527,38 @@
                     document.getElementById("exc").disabled = false;
                  
                     if (i > 0) {
-                        //$('#dataTable').DataTable().destroy();
-                           table.innerHTML = "";
+                        $('#dataTable').DataTable().destroy();
+                        table.innerHTML = "";
                     }
-                    var tabledata="<table id='dataTable'><tbody>";
-                    for (let i = 0; i < data.length; i++) {
-                       tabledata+= "<tr><td style=''>"+ data[i].id + "</td><td>" + data[i].fields.Title + "</td><td>" + data[i].fields.TeamProject + "</td><td>" + data[i].fields.Sprint + "</td><td>" + data[i].fields.State + "</td><td>" + data[i].fields.WorkItemType + "</td></tr>"
+                    var tabledata;
+                    if (data.length > 0) {
+                        tabledata = "<table id='dataTable' class='table table-dark table-borderless'><thead> <tr><th>Id</th><th>Title</th><th>Project</th><th>Sprint</th><th>State</th><th>Type</th></tr></thead><tbody>";
+                        for (let i = 0; i < data.length; i++) {
+                            tabledata += "<tr><td hidden>" + data[i].url + "</td><td style=''>" + data[i].id + "</td><td><a href='https://dev.azure.com/" + inp.OrganizationName + "/" + data[i].fields.TeamProject + "/_workitems/edit/" + data[i].id + "' target='_blank'>" + data[i].fields.Title + "</a></td><td>" + data[i].fields.TeamProject + "</td><td>" + data[i].fields.Sprint + "</td><td>" + data[i].fields.State + "</td><td>" + data[i].fields.WorkItemType + "</td></tr>"
+                        }
+                        tabledata += "</tbody></table>";
+                    } else {
+                        tabledata = "<table id='dataTable'><thead></thead><tbody></tbody><table>";
+                        table.innerHTML = tabledata;
+                         var table= $('#dataTable').DataTable();
+                              document.getElementById('load').hidden = true;
+                        document.getElementById("table").hidden = false;
+                           i++;
+                        return;
                     }
-                    tabledata += "</tbody></table>";
-                    table.innerHTML += tabledata;
+                    console.log(tabledata);
+                    table.innerHTML += tabledata$(document).ready(function() {
+
+     
+
                     document.getElementById("Count").innerHTML = " Count = " + data.length;
-                      $('#dataTable').DataTable();
-                        i++;
+                   var table= $('#dataTable').DataTable();
+                              document.getElementById('load').hidden = true;
+                    document.getElementById("table").hidden = false;
+                    } );
+                    i++;
+              
+
 
 
                 }

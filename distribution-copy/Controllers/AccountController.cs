@@ -277,7 +277,7 @@ namespace distribution_copy.Controllers
             }
 
             ResponseWI returnWI2 = new ResponseWI();
-            if (inp.WorkItemType != null && inp.WorkItemType != "Empty List")
+            if (inp.WorkItemType != null && inp.WorkItemType != "Empty List"&& inp.WorkItemType !="0")
             {
                 returnWI2.value = new List<Value>();
                 foreach (var i in returnWI.value)
@@ -291,7 +291,7 @@ namespace distribution_copy.Controllers
 
             ResponseWI returnWI3 = new ResponseWI();
 
-            if (inp.AssignedTo != null && inp.AssignedTo != "Empty List")
+            if (inp.AssignedTo != null && inp.AssignedTo != "Empty List" && inp.AssignedTo != "0")
             {
                 returnWI3.value = new List<Value>();
                 foreach (var i in returnWI2.value)
@@ -308,7 +308,7 @@ namespace distribution_copy.Controllers
 
             ResponseWI returnWI4 = new ResponseWI();
 
-            if (inp.Sprint != null && inp.Sprint != "Empty List")
+            if (inp.Sprint != null && inp.Sprint != "Empty List" && inp.Sprint != "0")
             {
                 returnWI4.value = new List<Value>();
                 foreach (var i in returnWI3.value)
@@ -322,7 +322,7 @@ namespace distribution_copy.Controllers
 
             ResponseWI returnWI5 = new ResponseWI();
 
-            if (inp.State != null && inp.State != "Empty List")
+            if (inp.State != null && inp.State != "Empty List" && inp.State != "0")
             {
                 returnWI5.value = new List<Value>();
                 foreach (var i in returnWI4.value)
@@ -336,12 +336,12 @@ namespace distribution_copy.Controllers
 
             ResponseWI FilteredWI = new ResponseWI();
 
-            if (inp.CreatedDate != null && inp.WorkItemType != "")
+            if (inp.CreatedDate != null && inp.CreatedDate != "")
             {
                 FilteredWI.value = new List<Value>();
                 foreach (var i in returnWI5.value)
                 {
-                    if (i.fields.CreatedDate.Date > DateTime.Parse(inp.CreatedDate))
+                    if (i.fields.CreatedDate.Date >= DateTime.Parse(inp.CreatedDate))
                         FilteredWI.value.Add(i);
                 }
             }
@@ -355,8 +355,8 @@ namespace distribution_copy.Controllers
         }
         public ActionResult SignOut()
         {
-            Session["visited"] = null;
-            return RedirectToAction("../Account/Verify");
+            Session.Clear();
+       return Redirect("https://app.vssps.visualstudio.com/_signout");
         }
 
         public ActionResult Export(InputModel inp)
