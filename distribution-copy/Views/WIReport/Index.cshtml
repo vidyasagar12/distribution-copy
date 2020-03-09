@@ -230,20 +230,22 @@
 
                         document.getElementById("Count").innerHTML = " Count = " + data.length;
                         tabledata += "</tbody></table>";
-                    } else {
-                       tabledata = "<table id='dataTable'><thead></thead><tbody></tbody><table>";
                         table.innerHTML = tabledata;
-                         var table= $('#dataTable').DataTable();
-                              document.getElementById('load').hidden = true;
-                        document.getElementById("table").hidden = false;
-                           i++;
-                        return;
+                    $('#dataTable').DataTable();
+
+                    } else {
+                       tabledata = "<table id='dataTable'><thead> <tr><th>Id</th><th>Title</th><th>Project</th><th>Sprint</th><th>State</th><th>Type</th></tr></thead><tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody><table>";
+                        table.innerHTML = tabledata;
+                       /*  var table=*/ $('#dataTable').DataTable();
+                        //      document.getElementById('load').hidden = true;
+                        //document.getElementById("table").hidden = false;
+                        //   i++;
+                        //return;
                     }
                     console.log(tabledata);
 
-                    table.innerHTML += tabledata;
+                    //table.innerHTML = tabledata;
                     document.getElementById("Count").innerHTML = " Count = " + data.length;
-                    var table=$('#dataTable').DataTable();
                 
                         i++;
 
@@ -308,6 +310,7 @@
             success:
                 function(data) {
                     console.log(data);
+                    document.getElementById("CreatedDate").innerHTML = "";
                     document.getElementById("AssignedTo").innerHTML = "<option value='0'>--ALL--</option>";
                     for (let i = 0; i < data[0].length; i++) {
                         document.getElementById("AssignedTo").innerHTML += "<option value='" + data[0][i] + "'>" + data[0][i]+ "</option>";
@@ -339,17 +342,27 @@
 
         document.getElementById("table").hidden = true;
         document.getElementById('load').hidden = false;
-
+    //    if() (
+    //        $("select#AssignedTo").val('0');
+    //    $("select#AssignedTo").val('0');
+    //    $("select#State").val('0');
+    //}
+            document.getElementById("AssignedTo").disabled = true;
+            document.getElementById("Sprint").disabled = true;
+            document.getElementById("State").disabled = true;
+        document.getElementById("CreatedDate").disabled = true;
+        document.getElementById("CreatedDate").value = "";
         var inp = new Object();
         var o = document.getElementById("org");
          inp.OrganizationName = o.options[o.selectedIndex].text;
-     var p = document.getElementById("ProjectName");
+    
         //inp.ProjectName =  p.options[p.selectedIndex].text;
         if (inp.OrganizationName == "--Choose Organisation--") {
-            $("#filters").hide();
+           
             document.getElementById('load').hidden = true;
             return;
         }
+         document.getElementById('filters').hidden = true;
 
         $.ajax({
             type: "POST",
@@ -454,9 +467,7 @@
     <img id="load" style="margin-left:45%" height="100" width="100" src="~/Content/Images/loadinggif.gif" hidden/>
     <div><p id="Count"></p></div>
     <div id="table">
-        <table>
-            
-        </table>
+
         @*<table id="dataTable" class="" style="border-radius:10px" hidden>
             <thead>
                 <tr>
@@ -531,31 +542,34 @@
                         table.innerHTML = "";
                     }
                     var tabledata;
+                   
                     if (data.length > 0) {
                         tabledata = "<table id='dataTable' class='table table-dark table-borderless'><thead> <tr><th>Id</th><th>Title</th><th>Project</th><th>Sprint</th><th>State</th><th>Type</th></tr></thead><tbody>";
                         for (let i = 0; i < data.length; i++) {
                             tabledata += "<tr><td hidden>" + data[i].url + "</td><td style=''>" + data[i].id + "</td><td><a href='https://dev.azure.com/" + inp.OrganizationName + "/" + data[i].fields.TeamProject + "/_workitems/edit/" + data[i].id + "' target='_blank'>" + data[i].fields.Title + "</a></td><td>" + data[i].fields.TeamProject + "</td><td>" + data[i].fields.Sprint + "</td><td>" + data[i].fields.State + "</td><td>" + data[i].fields.WorkItemType + "</td></tr>"
                         }
                         tabledata += "</tbody></table>";
-                    } else {
-                        tabledata = "<table id='dataTable'><thead></thead><tbody></tbody><table>";
                         table.innerHTML = tabledata;
-                         var table= $('#dataTable').DataTable();
-                              document.getElementById('load').hidden = true;
-                        document.getElementById("table").hidden = false;
-                           i++;
-                        return;
+                         $('#dataTable').DataTable();
+                    } else {
+                        tabledata = "<table id='dataTable'><thead> <tr><th>Id</th><th>Title</th><th>Project</th><th>Sprint</th><th>State</th><th>Type</th></tr></thead><tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody><table>";
+                        table.innerHTML = tabledata;
+                      $('#dataTable').DataTable();
+                        //      document.getElementById('load').hidden = true;
+                        //document.getElementById("table").hidden = false;
+                        //   i++;
+                        //return;
                     }
                     console.log(tabledata);
-                    table.innerHTML += tabledata$(document).ready(function() {
+                    //table.innerHTML = tabledata;
 
      
 
                     document.getElementById("Count").innerHTML = " Count = " + data.length;
-                   var table= $('#dataTable').DataTable();
+                   
                               document.getElementById('load').hidden = true;
                     document.getElementById("table").hidden = false;
-                    } );
+             
                     i++;
               
 
