@@ -350,7 +350,11 @@ namespace distribution_copy.Controllers
             if (loc > 0)
                 return FilteredWI;
             else
-                return Json(FilteredWI.value, JsonRequestBehavior.AllowGet);
+            {
+                string output = JsonConvert.SerializeObject(FilteredWI.value);
+                //return Json(FilteredWI.value, JsonRequestBehavior.AllowGet);
+                return output;
+            }
 
         }
         public ActionResult SignOut()
