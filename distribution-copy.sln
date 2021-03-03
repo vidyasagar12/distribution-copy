@@ -5,6 +5,13 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "distribution-copy", "distribution-copy\distribution-copy.csproj", "{8DB1B0D6-5511-45F0-9228-6E8A2AB0A496}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{B8E3D065-8AB2-4B78-AC38-8DAC83769494}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{EA8830DE-F888-4691-88FD-B6ADAB81A085}"
+	ProjectSection(SolutionItems) = preProject
+		DotnetTest.yaml = DotnetTest.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +25,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EA8830DE-F888-4691-88FD-B6ADAB81A085} = {B8E3D065-8AB2-4B78-AC38-8DAC83769494}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A41D2B34-3968-496E-A3B3-06BC64658F22}
