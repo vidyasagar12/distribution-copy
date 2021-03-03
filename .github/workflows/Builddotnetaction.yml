@@ -10,6 +10,8 @@ name: End2End Workflow
 # Change the variable values in env section if required.
 
 on:
+  push: 
+    branches: [master]
   workflow_dispatch:   
 env:
   SLN_FILE: distribution-copy.sln
