@@ -1,0 +1,39 @@
+name: End2End Workflow
+
+# Prerequisities:
+# -----------------
+# Create Azure Web App (ASP.NET v4.7) and provide the publish profile in secrets with name WEB_APP_PUBLISH_PROFILE.
+# Create SQL Server & DB on Azure and add the connection string on configuration section of Azure Web App.
+# Name the connection string as DefaultConnectionString (Need not update in Web.config).
+# Enable "Allow Azure services and resources to access this server" in Firewalls section of SQL Server.
+# Add Application Settings on app service with same name in Web.config. Refer Web.config.
+# Change the variable values in env section if required.
+
+on:
+  workflow_dispatch:   
+env:
+  SLN_FILE: distribution-copy.sln
+  
+jobs:
+  build:
+    name: BUILD USING VS2019
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.2.0
+      - name: Setup NuGet.exe
+        uses: NuGet/setup-nuget@v1.0.2
+      - name: Setup MSbuild
+        uses: microsoft/setup-msbuild@v1
+      - name: NuGet restore
+        run: nuget restore
+      - name: BuildApp
+        run: |
+          msbuild ${{env.SLN_FILE}} /p:TransformWebConfigEnabled=False /p:AutoParameterizationWebConfigConnectionStrings=False /p:Configuration=Release /p:Platform='Any CPU' /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="${{github.workspace}}\stagingdir"
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: drop
+          path: ${{github.workspace}}\stagingdir
+
+  
