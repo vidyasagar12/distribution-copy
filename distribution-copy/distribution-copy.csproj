@@ -575,6 +575,7 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include=".github\workflows\DotnetTest.yml" />
     <None Include="Properties\PublishProfiles\samplecustomreport - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\samplecustomreport - ReadOnly - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\samplecustomreport - Web Deploy.pubxml" />
