@@ -18,19 +18,6 @@ namespace distribution_copy.Controllers
            
             return Ok();
         }  
-        //[HttpPost]
-        //public IQueryable<Value> Filtered(InputModel inp, int loc)
-        //{
-        //    AccountController account = new AccountController();
-        //    var data = (List<Value>)account.Filter(inp, loc);
-        //    return data.AsQueryable();
-        //}
-        //[HttpPost]
-        //public IQueryable<Value> getWorkItembyTypeApi(InputModel inp)
-        //{
-        //    //AccountController account = new AccountController();
-        //    //var data = (List<Value>)account.getWorkItembyType(inp);
-        //    //return data.AsQueryable();
-        //}
+        
     }
 }
