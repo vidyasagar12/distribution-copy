@@ -1,13 +1,5 @@
 name: End2End Workflow
 
-# Prerequisities:
-# -----------------
-# Create Azure Web App (ASP.NET v4.7) and provide the publish profile in secrets with name WEB_APP_PUBLISH_PROFILE.
-# Create SQL Server & DB on Azure and add the connection string on configuration section of Azure Web App.
-# Name the connection string as DefaultConnectionString (Need not update in Web.config).
-# Enable "Allow Azure services and resources to access this server" in Firewalls section of SQL Server.
-# Add Application Settings on app service with same name in Web.config. Refer Web.config.
-# Change the variable values in env section if required.
 
 on:
   push: 
@@ -24,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.2.0
       - name: Setup NuGet.exe
-        uses: NuGet/setup-nuget@v1.0.2
+        uses: NuGet/setup-nuget@v1.0.5
       - name: Setup MSbuild
         uses: microsoft/setup-msbuild@v1
       - name: NuGet restore
